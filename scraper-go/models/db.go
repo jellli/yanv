@@ -16,6 +16,7 @@ func InitDB() {
 	}
 	db.Exec("PRAGMA journal_mode=WAL;")
 	db.AutoMigrate(&Task{})
+	db.AutoMigrate(&Novel{})
 	DB = db
 
 }

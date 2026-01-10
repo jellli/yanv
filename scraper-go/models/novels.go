@@ -2,7 +2,6 @@ package models
 
 type Novel struct {
 	ID          string  `json:"id"`
-	No          string  `json:"no"`
 	Title       string  `json:"title"`
 	Author      string  `json:"author"`
 	Category    string  `json:"category"`

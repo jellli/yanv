@@ -8,7 +8,6 @@ import (
 	"scraper/utils"
 	"strconv"
 	"strings"
-	"time"
 	"unicode/utf8"
 
 	"github.com/gocolly/colly"
@@ -32,6 +31,11 @@ var (
 	reID         = regexp.MustCompile(`txt-(\d+)\.htm`)
 	reStar       = regexp.MustCompile(`\/(\d+)\.gif`)
 )
+
+type Count struct {
+	Success int16
+	Failed  int16
+}
 
 func parseDescription(raw string) models.Novel {
 	n := models.Novel{}
@@ -60,29 +64,26 @@ func parseDescription(raw string) models.Novel {
 	n.Summary = strings.TrimSpace(cleanSummary)
 	return n
 }
-
-func CrawlDetial(task *models.Task) {
-	c := colly.NewCollector(
-		colly.AllowedDomains("www.aqxsw333.com"),
-		colly.UserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"),
-	)
-
+func RegisterDetailCallbacks(c *colly.Collector, count *Count) {
 	// 统一获取上下文中的 Novel
 	getNovel := func(r *colly.Request) *models.Novel {
 		return r.Ctx.GetAny("novel").(*models.Novel)
 	}
 
-	c.Limit(&colly.LimitRule{
-		DomainGlob:  "*",
-		RandomDelay: 1 * time.Second,
-		Parallelism: 1,
-	})
+	// 从上下文中获取 Task
+	getTask := func(r *colly.Request) *models.Task {
+		return r.Ctx.GetAny("task").(*models.Task)
+	}
 
 	c.OnRequest(func(r *colly.Request) {
 		r.Ctx.Put("novel", &models.Novel{})
 	})
 
 	c.OnError(func(r *colly.Response, err error) {
+		count.Failed++
+		task := getTask(r.Request)
+		models.DB.Model(task).Update("status", 0)
+
 		if r.StatusCode == http.StatusNotFound {
 			slog.Info("采集结束", "url", r.Request.URL.String())
 			return
@@ -142,22 +143,25 @@ func CrawlDetial(task *models.Task) {
 
 	c.OnScraped(func(r *colly.Response) {
 		n := getNovel(r.Request)
+		task := getTask(r.Request)
 		n.SourceURL = r.Request.URL.String()
 
 		if match := reID.FindStringSubmatch(n.SourceURL); len(match) > 1 {
-			n.No = match[1]
+			n.ID = match[1]
 		}
 
 		if n.Title != "" {
 			result := models.DB.Create(n)
 			if result.Error != nil {
 				slog.Error("数据入库失败", "id", n.ID, "title", n.Title, "err", result.Error.Error())
+				count.Failed++
+				models.DB.Model(task).Update("status", 0)
 			} else {
+				task.Status = 2
+				models.DB.Save(task)
 				slog.Info("采集成功", "id", n.ID, "title", n.Title, "size", n.Size)
+				count.Success++
 			}
 		}
 	})
-
-	slog.Info("开始采集任务", "url", task.URL)
-	c.Visit(task.URL)
 }
