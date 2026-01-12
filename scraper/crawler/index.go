@@ -2,12 +2,12 @@ package crawler
 
 import (
 	"log/slog"
-	"scraper/models"
-	"scraper/utils"
 	"strconv"
 	"strings"
 	"time"
 	"unicode/utf8"
+	"yanv/scraper/models"
+	"yanv/scraper/utils"
 
 	"github.com/gocolly/colly"
 )

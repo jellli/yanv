@@ -3,16 +3,16 @@ package main
 import (
 	"log/slog"
 	"os"
-	"scraper/crawler"
-	"scraper/models"
 	"strconv"
 	"time"
+	"yanv/scraper/crawler"
+	"yanv/scraper/models"
 
 	"github.com/gocolly/colly"
 )
 
 func main() {
-	models.InitDB()
+	models.InitDB("../database/novels.db")
 
 	setupLogger()
 

@@ -7,8 +7,8 @@ import (
 
 var DB *gorm.DB
 
-func InitDB() {
-	db, err := gorm.Open(sqlite.Open("novels.db"), &gorm.Config{
+func InitDB(dbPath string) {
+	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 	if err != nil {

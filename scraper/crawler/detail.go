@@ -4,11 +4,11 @@ import (
 	"log/slog"
 	"net/http"
 	"regexp"
-	"scraper/models"
-	"scraper/utils"
 	"strconv"
 	"strings"
 	"unicode/utf8"
+	"yanv/scraper/models"
+	"yanv/scraper/utils"
 
 	"github.com/gocolly/colly"
 )

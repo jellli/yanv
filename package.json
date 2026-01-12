@@ -1,0 +1,9 @@
+{
+	"devDependencies": {
+		"@tanstack/router-plugin": "^1.149.0"
+	},
+	"dependencies": {
+		"@tanstack/react-router": "^1.147.3",
+		"@tanstack/react-router-devtools": "^1.149.0"
+	}
+}
