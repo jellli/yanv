@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	models.InitDB("../database/novels.db")
+	models.InitDB()
 
 	setupLogger()
 
