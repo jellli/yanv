@@ -36,8 +36,8 @@ type NovelQuery struct {
 	StarRating *float64
 }
 
-func (a *App) QueryNovels(n *NovelQuery, page int, pageSize int) []models.Novel {
+func (a *App) QueryNovels(n *NovelQuery, offset int, limit int) []models.Novel {
 	var novels []models.Novel
-	models.DB.Model(models.Novel{}).Where(n).Offset((page - 1) * pageSize).Limit(pageSize).Find(&novels)
+	models.DB.Model(models.Novel{}).Where(n).Offset(offset * limit).Limit(limit).Find(&novels)
 	return novels
 }
