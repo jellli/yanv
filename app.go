@@ -36,8 +36,27 @@ type NovelQuery struct {
 	StarRating *float64
 }
 
-func (a *App) QueryNovels(n *NovelQuery, offset int, limit int) []models.Novel {
+func (a *App) QueryNovels(n *NovelQuery, page int, pageSize int) []models.Novel {
 	var novels []models.Novel
-	models.DB.Model(models.Novel{}).Where(n).Offset(offset * limit).Limit(limit).Find(&novels)
+	query := models.DB.Model(models.Novel{})
+	if n.Title != nil && *n.Title != "" {
+		query.Where("title LIKE ?", "%"+*n.Title+"%")
+	}
+
+	if n.Author != nil {
+		query = query.Where("author = ?", *n.Author)
+	}
+	if n.Category != nil {
+		query = query.Where("category = ?", *n.Category)
+	}
+	if n.UpdateTime != nil {
+		query = query.Where("update_time = ?", *n.UpdateTime)
+	}
+	if n.StarRating != nil {
+		query = query.Where("star_rating = ?", *n.StarRating)
+	}
+
+	query = query.Offset(page * pageSize).Limit(pageSize).Find(&novels)
+
 	return novels
 }
