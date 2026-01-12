@@ -5,6 +5,7 @@ import (
 	"os"
 	"scraper/crawler"
 	"scraper/models"
+	"strconv"
 	"time"
 
 	"github.com/gocolly/colly"
@@ -34,11 +35,21 @@ func main() {
 		Parallelism: 1,
 	})
 	crawler.RegisterDetailCallbacks(c, &count)
+
+	var remainTaskCount int64
+	models.DB.Model(models.Task{}).Where("status = ?", 0).Count(&remainTaskCount)
 	for {
+		percent := float64(count.Success+count.Failed) / float64(remainTaskCount) * 100
+		slog.Info("任务数量",
+			"成功", count.Success,
+			"失败", count.Failed,
+			"总数", remainTaskCount,
+			"进度", strconv.FormatFloat(percent, 'f', 2, 64)+"%",
+		)
 		var tasks []models.Task
 		tx := models.DB.Begin()
 
-		result := tx.Limit(100).Where(&models.Task{Status: 0}).Find(&tasks)
+		result := tx.Model(models.Task{}).Limit(10).Where("status = ?", 0).Find(&tasks)
 		if result.Error != nil {
 			slog.Error("查询任务失败", "err", result.Error)
 			tx.Rollback()

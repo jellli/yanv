@@ -20,7 +20,7 @@ const (
 	selDesc       = "#mainDownInfo > div:nth-child(1) > p:nth-child(3)"
 	selUpdateTime = "//*[@id='mainDownInfo']/table/tbody/tr/td/table/tbody/tr[5]/td[2]/font"
 	selSize       = "//*[@id='mainDownInfo']/table/tbody/tr/td/table/tbody/tr[6]/td[2]/font"
-	selDownload   = "//a[contains(@href, '/txt/') and contains(text(), '下载')]"
+	selDownload   = "//*[@id='mainDownInfo']/table/tbody/tr/td/table/tbody/tr[8]/td[2]/center/a"
 )
 
 var (
@@ -138,7 +138,21 @@ func RegisterDetailCallbacks(c *colly.Collector, count *Count) {
 
 	// 下载链接
 	c.OnXML(selDownload, func(x *colly.XMLElement) {
-		getNovel(x.Request).DownloadURL = x.Request.AbsoluteURL(x.Attr("href"))
+		novel := getNovel(x.Request)
+		subLink := x.Attr("href")
+		if subLink == "" {
+			slog.Error("获取下载链接失败", "url", x.Request.URL.String())
+			return
+		}
+		targetUrl := x.Request.AbsoluteURL(subLink)
+		realDownloadXpath := "//*[@id='mainDownInfo']/table/tbody/tr/td/table/tbody/tr[5]/td[2]/a[2]"
+
+		dCollector := c.Clone()
+		dCollector.OnXML(realDownloadXpath, func(subX *colly.XMLElement) {
+			novel.DownloadURL = subX.Attr("href")
+		})
+		dCollector.Visit(targetUrl)
+		dCollector.Wait()
 	})
 
 	c.OnScraped(func(r *colly.Response) {
