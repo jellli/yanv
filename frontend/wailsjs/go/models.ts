@@ -1,11 +1,11 @@
 export namespace main {
 	
 	export class NovelQuery {
-	    Title?: string;
-	    Author?: string;
-	    Category?: string;
+	    title?: string;
+	    author?: string;
+	    category?: string;
 	    update_time?: string;
-	    StarRating?: number;
+	    star_rating?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new NovelQuery(source);
@@ -13,11 +13,11 @@ export namespace main {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Title = source["Title"];
-	        this.Author = source["Author"];
-	        this.Category = source["Category"];
+	        this.title = source["title"];
+	        this.author = source["author"];
+	        this.category = source["category"];
 	        this.update_time = source["update_time"];
-	        this.StarRating = source["StarRating"];
+	        this.star_rating = source["star_rating"];
 	    }
 	}
 

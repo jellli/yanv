@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"yanv/scraper/models"
+	"yanv/models"
 )
 
 // App struct
@@ -29,11 +29,11 @@ func (a *App) Greet(name string) string {
 }
 
 type NovelQuery struct {
-	Title      *string
-	Author     *string
-	Category   *string
-	UpdateTime *string `json:"update_time"`
-	StarRating *float64
+	Title      *string  `json:"title"`
+	Author     *string  `json:"author"`
+	Category   *string  `json:"category"`
+	UpdateTime *string  `json:"update_time"`
+	StarRating *float64 `json:"star_rating"`
 }
 
 func (a *App) QueryNovels(n *NovelQuery, page int, pageSize int) []models.Novel {
@@ -59,4 +59,10 @@ func (a *App) QueryNovels(n *NovelQuery, page int, pageSize int) []models.Novel 
 	query = query.Offset(page * pageSize).Limit(pageSize).Find(&novels)
 
 	return novels
+}
+
+func (a *App) QueryNovelsCount() int64 {
+	var count int64
+	models.DB.Model(models.Novel{}).Count(&count)
+	return count
 }

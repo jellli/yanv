@@ -7,6 +7,7 @@ toolchain go1.24.3
 require (
 	github.com/PuerkitoBio/goquery v1.11.0
 	github.com/gocolly/colly v1.2.0
+	github.com/spf13/cobra v1.10.2
 	github.com/wailsapp/wails/v2 v2.11.0
 	golang.org/x/text v0.31.0
 	gorm.io/driver/sqlite v1.6.0
@@ -26,6 +27,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/websocket v1.5.3 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jchv/go-winloader v0.0.0-20210711035445-715c2860da7e // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
@@ -44,6 +46,7 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
 	github.com/samber/lo v1.49.1 // indirect
+	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	github.com/tkrajina/go-reflector v0.5.8 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
