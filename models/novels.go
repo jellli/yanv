@@ -4,7 +4,7 @@ type Novel struct {
 	ID          string  `json:"id"`
 	Title       string  `json:"title"`
 	Author      string  `json:"author"`
-	Category    string  `json:"category"`
+	Category    string  `json:"category" gorm:"index"`
 	StarRating  float64 `json:"star_rating"`
 	Summary     string  `json:"summary"`
 	ShortIntro  string  `json:"short_intro"`

@@ -3,9 +3,9 @@ export namespace main {
 	export class NovelQuery {
 	    title?: string;
 	    author?: string;
-	    category?: string;
+	    category?: string[];
 	    update_time?: string;
-	    star_rating?: number;
+	    star_rating?: number[];
 	
 	    static createFrom(source: any = {}) {
 	        return new NovelQuery(source);

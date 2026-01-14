@@ -6,10 +6,11 @@ import {
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
 import { Link } from "@tanstack/react-router";
-import { Book, Filter, Home } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { QueryNovelsCount } from "../../wailsjs/go/main/App";
+import { QueryNovelsCount } from "wailsjs/go/main/App";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+const queryClient = new QueryClient();
 export const Route = createRootRoute({
   loader: async () => {
     const count = await QueryNovelsCount();
@@ -19,15 +20,11 @@ export const Route = createRootRoute({
     const { count } = Route.useLoaderData();
 
     return (
-      <>
+      <QueryClientProvider client={queryClient}>
         <header className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-xl font-bold text-foreground flex items-center gap-1 mb-2">
-                  <Book />
-                  小宝书库
-                </h1>
                 <NavigationMenu>
                   <NavigationMenuLink>
                     <Link
@@ -39,14 +36,22 @@ export const Route = createRootRoute({
                       }}
                       className="flex gap-2 items-center"
                     >
-                      <Home />
-                      首页
+                      书架
                     </Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink>
-                    <Link to="/filter" className="flex gap-2 items-center">
-                      <Filter />
-                      筛选器
+                    <Link
+                      search={{
+                        page: 1,
+                        pageSize: 10,
+                        filter: {
+                          star_rating: [4, 5],
+                        },
+                      }}
+                      to="/filter"
+                      className="flex gap-2 items-center"
+                    >
+                      找书
                     </Link>
                   </NavigationMenuLink>
                 </NavigationMenu>
@@ -70,7 +75,7 @@ export const Route = createRootRoute({
             },
           ]}
         />
-      </>
+      </QueryClientProvider>
     );
   },
 });

@@ -5,6 +5,8 @@ import {models} from '../models';
 
 export function Greet(arg1:string):Promise<string>;
 
+export function QueryCategories():Promise<Array<string>>;
+
 export function QueryNovels(arg1:main.NovelQuery,arg2:number,arg3:number):Promise<Array<models.Novel>>;
 
 export function QueryNovelsCount():Promise<number>;
