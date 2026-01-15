@@ -20,10 +20,13 @@ jobs:
         include:
           - os: ubuntu-latest
             platform: linux/amd64
+            artifact_name: linux-amd64
           - os: windows-latest
             platform: windows/amd64
+            artifact_name: windows-amd64
           - os: macos-latest
             platform: darwin/universal
+            artifact_name: macos-universal
 
     runs-on: ${{ matrix.os }}
 
@@ -77,12 +80,13 @@ jobs:
 
       - name: Build Wails App
         run: |
+          export CGO_ENABLED=0
           wails build -platform ${{ matrix.platform }}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-${{ matrix.platform }}
+          name: wails-app-${{ matrix.artifact_name }}
           path: |
             build/bin/*
 
