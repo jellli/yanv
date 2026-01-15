@@ -14,6 +14,7 @@ import {
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useDebounce } from "react-use";
 
 export const Route = createFileRoute("/filter")({
   component: RouteComponent,
@@ -43,6 +44,22 @@ function RouteComponent() {
   const navigate = Route.useNavigate();
   const search = Route.useSearch();
   const [showFilter, setShowFilter] = useState(true);
+  const [filter, setFilter] = useState(
+    main.NovelQuery.createFrom(search.filter),
+  );
+  useDebounce(
+    () => {
+      navigate({
+        search: (prev) =>
+          produce(prev, (draft) => {
+            draft.filter = filter;
+            draft.page = 1;
+          }),
+      });
+    },
+    200,
+    [filter],
+  );
   return (
     <div className="container mx-auto py-8">
       <div className="flex gap-8 items-start">
@@ -54,17 +71,7 @@ function RouteComponent() {
                 根据条件查找小说
               </p>
             </div>
-            <NovelFilter
-              onChange={(v) =>
-                navigate({
-                  search: (prev) =>
-                    produce(prev, (draft) => {
-                      draft.filter = v;
-                      draft.page = 1;
-                    }),
-                })
-              }
-            />
+            <NovelFilter onChange={setFilter} />
           </aside>
         )}
         <main className="flex-1 min-w-0">
