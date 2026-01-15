@@ -3,7 +3,9 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import {
   NavigationMenu,
-  NavigationMenuLink,
+  NavigationMenuItem,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
@@ -22,12 +24,29 @@ export const Route = createRootRoute({
 
     return (
       <QueryClientProvider client={queryClient}>
-        <header className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-sm">
-          <div className="container mx-auto px-4 py-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <NavigationMenu>
-                  <NavigationMenuLink>
+        <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="container mx-auto flex h-14 items-center justify-between px-4">
+            <div className="flex items-center gap-8">
+              <Link
+                to="/"
+                search={{
+                  filter: {},
+                  page: 1,
+                  pageSize: 10,
+                }}
+                className="flex items-center gap-2 transition-opacity hover:opacity-80"
+              >
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary font-bold text-primary-foreground">
+                  🐷
+                </div>
+                <span className="hidden text-xl font-bold tracking-tight sm:inline-block">
+                  小猪读书
+                </span>
+              </Link>
+
+              <NavigationMenu>
+                <NavigationMenuList className="gap-1">
+                  <NavigationMenuItem>
                     <Link
                       to="/"
                       search={{
@@ -35,13 +54,18 @@ export const Route = createRootRoute({
                         pageSize: 10,
                         filter: {},
                       }}
-                      className="flex gap-2 items-center"
+                      className={navigationMenuTriggerStyle()}
+                      activeProps={{
+                        className:
+                          "bg-accent text-accent-foreground font-semibold shadow-sm",
+                      }}
                     >
                       书架
                     </Link>
-                  </NavigationMenuLink>
-                  <NavigationMenuLink>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
                     <Link
+                      to="/filter"
                       search={{
                         page: 1,
                         pageSize: 10,
@@ -49,17 +73,27 @@ export const Route = createRootRoute({
                           star_rating: [4, 5],
                         },
                       }}
-                      to="/filter"
-                      className="flex gap-2 items-center"
+                      className={navigationMenuTriggerStyle()}
+                      activeProps={{
+                        className:
+                          "bg-accent text-accent-foreground font-semibold shadow-sm",
+                      }}
                     >
                       找书
                     </Link>
-                  </NavigationMenuLink>
-                </NavigationMenu>
-              </div>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+            </div>
 
-              <Badge variant="secondary" className="text-xs">
-                {count} 本
+            <div className="flex items-center gap-4">
+              <Badge
+                variant="outline"
+                className="flex items-center gap-1.5 bg-background px-3 py-1 font-mono text-xs shadow-sm"
+              >
+                <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-muted-foreground mr-0.5">库存:</span>
+                <span className="font-bold">{count}</span>
               </Badge>
             </div>
           </div>

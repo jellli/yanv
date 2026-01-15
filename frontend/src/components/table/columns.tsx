@@ -4,6 +4,7 @@ import {
   BookOpen,
   ChevronLeft,
   ChevronRight,
+  Copy,
   Download,
   Quote,
   Star,
@@ -25,6 +26,7 @@ import { QueryNovelById } from "wailsjs/go/main/App";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
+import { useCopyToClipboard } from "react-use";
 
 const columnHelper = createColumnHelper<models.Novel>();
 
@@ -247,15 +249,19 @@ export const columns = [
   }),
   columnHelper.display({
     header: "操作",
-    cell: () => {
+    cell: (props) => {
+      const [_, copyToClipboard] = useCopyToClipboard();
       return (
         <Button
           variant="ghost"
           onClick={() => {
-            toast.warning("这个还没开发完哦");
+            copyToClipboard(
+              `https://www.aqxsw666.com/txt-xx/15/txt-${props.row.original.id}.htm`,
+            );
+            toast.success("复制链接成功");
           }}
         >
-          <Download />
+          <Copy />
         </Button>
       );
     },
