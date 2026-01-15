@@ -80,8 +80,9 @@ jobs:
 
       - name: Build Wails App
         run: |
-          export CGO_ENABLED=0
           wails build -platform ${{ matrix.platform }}
+        env:
+          CGO_ENABLED: 0
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4

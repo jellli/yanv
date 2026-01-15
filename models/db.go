@@ -27,8 +27,12 @@ func InitDB() {
 	fmt.Println(dbDir)
 
 	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
-		copyPresetDB(dbPath)
-
+		err := copyPresetDB(dbPath)
+		if err != nil {
+			fmt.Println("Failed to copy preset DB:", err)
+		} else {
+			fmt.Println("Successfully initialized DB at:", dbPath)
+		}
 	}
 	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{
 		DisableForeignKeyConstraintWhenMigrating: true,
@@ -41,22 +45,19 @@ func InitDB() {
 	db.AutoMigrate(&Novel{})
 	DB = db
 }
-func copyPresetDB(dst string) {
+func copyPresetDB(dst string) error {
 	srcFile, err := presetDB.Open("database/novels.db")
 	if err != nil {
-		fmt.Println("Error opening embedded db:", err)
-		return
+		return err
 	}
 	defer srcFile.Close()
 
-	if info, err := srcFile.Stat(); err == nil {
-		fmt.Printf("Embedded DB size: %d bytes\n", info.Size())
-	}
 	dstFile, err := os.Create(dst)
 	if err != nil {
-		return
+		return err
 	}
 	defer dstFile.Close()
 
-	io.Copy(dstFile, srcFile)
+	_, err = io.Copy(dstFile, srcFile)
+	return err
 }
