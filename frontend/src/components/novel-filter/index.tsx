@@ -44,11 +44,7 @@ const NovelFilter = ({
   };
 
   return (
-    <Accordion
-      type="multiple"
-      className="w-[200px]"
-      defaultValue={["star_rating", "category"]}
-    >
+    <Accordion type="multiple" defaultValue={["star_rating", "category"]}>
       <AccordionItem value="title">
         <AccordionTrigger>标题</AccordionTrigger>
         <AccordionContent>

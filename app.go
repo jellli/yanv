@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"yanv/models"
+
+	"gorm.io/gorm"
 )
 
 // App struct
@@ -71,11 +73,10 @@ func (a *App) QueryNovels(n *NovelQuery, page int, pageSize int) NovelResult {
 	}
 
 	query.Count(&count)
-	// if count < 3000 {
-	// 	query.Pluck("id", &ids)
-	// }
 
-	query = query.Offset((page - 1) * pageSize).Limit(pageSize).Find(&novels)
+	query.Session(&gorm.Session{}).Pluck("id", &ids)
+
+	query = query.Order("id asc").Offset((page - 1) * pageSize).Limit(pageSize).Find(&novels)
 
 	return NovelResult{
 		Novels: novels,

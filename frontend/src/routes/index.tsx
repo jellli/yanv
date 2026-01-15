@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { QueryNovels } from "wailsjs/go/main/App";
 import { main } from "wailsjs/go/models";
 import {
@@ -7,6 +7,7 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { Button } from "@/components/ui/button";
 
 interface NovelSearch {
   page: number;
@@ -38,46 +39,19 @@ function App() {
       <EmptyHeader>
         <EmptyTitle>🚧</EmptyTitle>
         <EmptyDescription>这个页面还在开发中...</EmptyDescription>
+        <Button asChild>
+          <Link
+            to="/filter"
+            search={{
+              filter: {},
+              page: 1,
+              pageSize: 10,
+            }}
+          >
+            去找书
+          </Link>
+        </Button>
       </EmptyHeader>
     </Empty>
   );
 }
-
-// const _D = ({ novel }: { novel: models.Novel }) => {
-//   return (
-//     <Drawer>
-//       <DrawerTrigger asChild>
-//         <Button variant="ghost" className="cursor-pointer">
-//           <ChevronUp />
-//         </Button>
-//       </DrawerTrigger>
-//       <DrawerOverlay className="fixed inset-0 bg-black/40" />
-//       <DrawerPortal>
-//         <DrawerContent className="h-[80%]">
-//           <DrawerHeader className="text-left">
-//             <div className="flex items-center gap-1">
-//               {Array.from({ length: novel.star_rating }).map((_, index) => (
-//                 <Star
-//                   key={index}
-//                   className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500"
-//                 />
-//               ))}
-//             </div>
-//             <DrawerTitle className="text-xl mt-2 font-medium text-gray-900 text-left">
-//               {novel.title}
-//             </DrawerTitle>
-//             <dl className="flex flex-wrap gap-2 text-sm mt-1">
-//               <dt className="text-gray-500">分类</dt>
-//               <dd>{novel.category}</dd>
-//               <dt className="text-gray-500">作者</dt>
-//               <dd>{novel.author}</dd>
-//             </dl>
-//           </DrawerHeader>
-//           <DrawerDescription className="text-left whitespace-pre-wrap mt-2 overflow-y-auto p-4">
-//             {novel.summary}
-//           </DrawerDescription>
-//         </DrawerContent>
-//       </DrawerPortal>
-//     </Drawer>
-//   );
-// };
