@@ -35,9 +35,16 @@ type NovelQuery struct {
 	UpdateTime *string       `json:"update_time"`
 	StarRating *([]*float64) `json:"star_rating"`
 }
+type NovelResult struct {
+	Novels []models.Novel `json:"novels"`
+	Count  int64          `json:"count"`
+	Ids    []string       `json:"ids"`
+}
 
-func (a *App) QueryNovels(n *NovelQuery, page int, pageSize int) []models.Novel {
+func (a *App) QueryNovels(n *NovelQuery, page int, pageSize int) NovelResult {
 	var novels []models.Novel
+	var count int64
+	var ids []string
 	query := models.DB.Model(models.Novel{})
 	if n.Title != nil && *n.Title != "" {
 		query = query.Where("title LIKE ?", "%"+*n.Title+"%")
@@ -63,9 +70,24 @@ func (a *App) QueryNovels(n *NovelQuery, page int, pageSize int) []models.Novel 
 		query = query.Where("star_rating BETWEEN ? AND ?", minV, maxV)
 	}
 
+	query.Count(&count)
+	// if count < 3000 {
+	// 	query.Pluck("id", &ids)
+	// }
+
 	query = query.Offset((page - 1) * pageSize).Limit(pageSize).Find(&novels)
 
-	return novels
+	return NovelResult{
+		Novels: novels,
+		Count:  count,
+		Ids:    ids,
+	}
+}
+
+func (a *App) QueryNovelById(id string) models.Novel {
+	var result models.Novel
+	models.DB.Model(models.Novel{}).Where("id = ?", id).First(&result)
+	return result
 }
 
 func (a *App) QueryNovelsCount() int64 {

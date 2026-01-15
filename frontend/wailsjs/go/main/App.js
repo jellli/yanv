@@ -10,6 +10,10 @@ export function QueryCategories() {
   return window['go']['main']['App']['QueryCategories']();
 }
 
+export function QueryNovelById(arg1) {
+  return window['go']['main']['App']['QueryNovelById'](arg1);
+}
+
 export function QueryNovels(arg1, arg2, arg3) {
   return window['go']['main']['App']['QueryNovels'](arg1, arg2, arg3);
 }

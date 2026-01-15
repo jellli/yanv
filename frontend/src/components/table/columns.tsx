@@ -11,6 +11,7 @@ import {
   DrawerTrigger,
 } from "../ui/drawer";
 import { ScrollArea } from "../ui/scroll-area";
+import { toast } from "sonner";
 
 const columnHelper = createColumnHelper<models.Novel>();
 
@@ -75,11 +76,13 @@ export const columns = [
   }),
   columnHelper.display({
     header: "操作",
-    cell: (props) => {
+    cell: () => {
       return (
         <Button
           variant="ghost"
-          onClick={() => console.log(props.row.original.download_url)}
+          onClick={() => {
+            toast.warning("这个还没开发完哦");
+          }}
         >
           <Download />
         </Button>

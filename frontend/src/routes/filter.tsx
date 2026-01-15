@@ -8,11 +8,18 @@ import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
 } from "@/components/ui/pagination";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  PanelLeftClose,
+  PanelLeftOpen,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Separator } from "@/components/ui/separator";
 
 export const Route = createFileRoute("/filter")({
   component: RouteComponent,
@@ -30,21 +37,22 @@ export const Route = createFileRoute("/filter")({
   }),
   loader: async ({ deps: { page, pageSize, filter } }) => {
     console.log(filter);
-    const novels = await QueryNovels(filter, page, pageSize);
+    const result = await QueryNovels(filter, page, pageSize);
     return {
-      novels,
+      ...result,
     };
   },
 });
 
 function RouteComponent() {
-  const { novels } = Route.useLoaderData();
+  const { novels, count } = Route.useLoaderData();
   const navigate = Route.useNavigate();
+  const search = Route.useSearch();
   const [showFilter, setShowFilter] = useState(true);
   return (
-    <div className="flex py-4 px-4 gap-8">
+    <div className="flex px-16 py-4 gap-8">
       {showFilter && (
-        <div className="w-[200px]">
+        <div className="py-2 px-4 border-r">
           <NovelFilter
             onChange={(v) =>
               navigate({
@@ -60,42 +68,67 @@ function RouteComponent() {
       )}
 
       <div className="flex-1">
-        <Button onClick={() => setShowFilter(!showFilter)}>
-          {showFilter ? "隐藏" : "显示"}筛选器
-        </Button>
+        <div className="mb-2">
+          <Button onClick={() => setShowFilter(!showFilter)} variant="outline">
+            {showFilter ? (
+              <>
+                <PanelLeftClose />
+                隐藏
+              </>
+            ) : (
+              <>
+                <PanelLeftOpen />
+                显示
+              </>
+            )}
+            筛选器
+          </Button>
+        </div>
         <NovelTable data={novels} />
-        <Pagination className="ml-auto">
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationLink
-                onClick={() =>
-                  navigate({
-                    search: (prev) =>
-                      produce(prev, (draft) => {
-                        draft.page = Math.max(draft.page - 1, 1);
-                      }),
-                  })
-                }
-              >
-                <ChevronLeft />
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink
-                onClick={() =>
-                  navigate({
-                    search: (prev) =>
-                      produce(prev, (draft) => {
-                        draft.page = draft.page + 1;
-                      }),
-                  })
-                }
-              >
-                <ChevronRight />
-              </PaginationLink>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        <div className="flex mt-4 items-center justify-between">
+          <div className="flex items-center gap-2 text-sm shrink-0">
+            <div>共找到 {count} 条记录</div>
+            <Separator orientation="vertical" />
+            <div>
+              第 {search.page} / {Math.ceil(count / search.pageSize)} 页
+            </div>
+          </div>
+          <Pagination className="justify-end">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() =>
+                    navigate({
+                      search: (prev) =>
+                        produce(prev, (draft) => {
+                          draft.page = Math.max(draft.page - 1, 1);
+                        }),
+                    })
+                  }
+                >
+                  <ChevronLeft />
+                </PaginationPrevious>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() =>
+                    navigate({
+                      search: (prev) =>
+                        produce(prev, (draft) => {
+                          draft.page = Math.min(
+                            draft.page + 1,
+                            Math.ceil(count / draft.pageSize),
+                          );
+                        }),
+                    })
+                  }
+                >
+                  <ChevronRight />
+                </PaginationNext>
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
       </div>
     </div>
   );

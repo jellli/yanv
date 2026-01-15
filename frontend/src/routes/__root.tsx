@@ -9,6 +9,7 @@ import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { QueryNovelsCount } from "wailsjs/go/main/App";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@/components/ui/sonner";
 
 const queryClient = new QueryClient();
 export const Route = createRootRoute({
@@ -64,6 +65,7 @@ export const Route = createRootRoute({
           </div>
         </header>
         <Outlet />
+        <Toaster position="top-right" />
         <TanStackDevtools
           config={{
             position: "bottom-right",
